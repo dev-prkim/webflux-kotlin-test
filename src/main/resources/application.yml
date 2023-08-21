@@ -1,0 +1,10 @@
+server:
+  port: 9091
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.boot: INFO
+    com.spring.webflux: ERROR
+    org.springframework.web.reactive: ERROR
