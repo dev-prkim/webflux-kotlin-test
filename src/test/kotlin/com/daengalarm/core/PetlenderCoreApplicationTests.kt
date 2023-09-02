@@ -1,4 +1,4 @@
-package com.petlender.core
+package com.daengalarm.core
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

@@ -1,10 +1,16 @@
 server:
   port: 9091
+  profiles:
+    active: dev
+  jpa:
+    show-sql: true
+  main:
+    allow-bean-definition-overriding: true
 
 logging:
   level:
     root: INFO
     org.springframework.web: DEBUG
     org.springframework.boot: INFO
-    com.spring.webflux: ERROR
+    com.spring.web-flux: ERROR
     org.springframework.web.reactive: ERROR

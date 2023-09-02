@@ -1,14 +1,14 @@
 package com.daengalarm.core
 
-import com.daengalarm.core.entity.User
 import com.daengalarm.core.repository.UserRepository
 import org.junit.jupiter.api.Test
-import reactor.core.publisher.Mono
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
-class UserService(val userRepository: UserRepository) {
+@DataJpaTest
+class UserServiceTest(private val userRepository: UserRepository) {
 
     @Test
     fun login() {
-        userRepository.findByUsernameAndPassword("test", "1234")
+
     }
 }

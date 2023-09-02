@@ -1,4 +1,4 @@
-package com.petlender.core.config
+package com.daengalarm.core.config
 
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.web.server.WebSession
 
 @Configuration
-@Profile("local", "dev")
+@Profile("dev")
 @Slf4j
 class SpringDocConfig() {
     private val logger: Logger = LoggerFactory.getLogger(SpringDocConfig::class.java)
