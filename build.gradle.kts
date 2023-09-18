@@ -28,22 +28,19 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-
     // swagger
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.4")
 
     // R2DBC
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.data:spring-data-r2dbc")
+    implementation("io.r2dbc:r2dbc-h2")
     runtimeOnly("com.h2database:h2")
-    runtimeOnly("io.r2dbc:r2dbc-h2")
 
-    compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.projectlombok:lombok")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.withType<KotlinCompile> {

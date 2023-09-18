@@ -1,12 +1,13 @@
 package com.daengalarm.core.repository
 
-import com.daengalarm.core.entity.User
-import org.springframework.data.jpa.repository.JpaRepository
+import com.daengalarm.core.entity.UserMng
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
+
 import reactor.core.publisher.Mono
 
 @Repository
-interface UserRepository : JpaRepository<User, Long> {
+public interface UserRepository : ReactiveCrudRepository<UserMng, Long> {
 
-    fun findByUsernameAndPassword(username: String?, password: String?): Mono<User>
+    public fun findByUsernameAndPassword(username: String?, password: String?): Mono<UserMng>
 }

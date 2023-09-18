@@ -1,6 +1,6 @@
 package com.daengalarm.core.handler
 
-import com.daengalarm.core.entity.User
+import com.daengalarm.core.entity.UserMng
 import com.daengalarm.core.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 class UserHandler(private val userService: UserService) {
 
     fun login(req: ServerRequest): Mono<ServerResponse> {
-        return req.bodyToMono(User::class.java)
+        return req.bodyToMono(UserMng::class.java)
             .flatMap { user ->
                 userService.login(user)
                     .flatMap { loggedInUser ->

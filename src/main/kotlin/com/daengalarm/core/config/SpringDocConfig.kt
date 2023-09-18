@@ -2,7 +2,6 @@ package com.daengalarm.core.config
 
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
-import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springdoc.core.utils.SpringDocUtils
@@ -13,7 +12,6 @@ import org.springframework.web.server.WebSession
 
 @Configuration
 @Profile("dev")
-@Slf4j
 class SpringDocConfig() {
     private val logger: Logger = LoggerFactory.getLogger(SpringDocConfig::class.java)
 
