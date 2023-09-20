@@ -1,4 +1,4 @@
-package com.daengalarm.core.entity.enums
+package com.daengalarm.core.model.enums
 
 enum class LoginType(val code: String) {
     DEFAULT("01"),

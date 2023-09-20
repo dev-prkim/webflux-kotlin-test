@@ -4,6 +4,15 @@ server:
     active: dev
   main:
     allow-bean-definition-overriding: true
+spring:
+  sql:
+    init:
+      schema-locations: classpath*:sql/schema.sql
+  r2dbc:
+    initialization-mode: always
+    url: r2dbc:h2:mem:///testdb?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: test
 logging:
   level:
     root: INFO

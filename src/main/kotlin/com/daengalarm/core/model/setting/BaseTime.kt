@@ -1,7 +1,6 @@
-package com.daengalarm.core.entity.setting
+package com.daengalarm.core.model.setting
 
 import jakarta.persistence.Column
-import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate

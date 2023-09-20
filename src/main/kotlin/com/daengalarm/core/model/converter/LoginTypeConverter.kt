@@ -1,6 +1,6 @@
-package com.daengalarm.core.entity.converter
+package com.daengalarm.core.model.converter
 
-import com.daengalarm.core.entity.enums.LoginType
+import com.daengalarm.core.model.enums.LoginType
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 

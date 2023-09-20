@@ -1,13 +1,15 @@
 package com.daengalarm.core.repository
 
-import com.daengalarm.core.entity.UserMng
+import com.daengalarm.core.model.entity.User
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 
 import reactor.core.publisher.Mono
 
 @Repository
-public interface UserRepository : ReactiveCrudRepository<UserMng, Long> {
+interface UserRepository : ReactiveCrudRepository<User, Long> {
 
-    public fun findByUsernameAndPassword(username: String?, password: String?): Mono<UserMng>
+    fun findByUsernameAndPassword(username: String, password: String): Flux<User>
+    fun findByLoginPin(loginPin: String): Flux<User>
 }

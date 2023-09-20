@@ -11,12 +11,15 @@ import org.springframework.web.reactive.function.server.router
 class UserRouter(private val handler: UserHandler) {
 
     @Bean
-    fun routerFunction() = nest(path("/api/v1/user"),
+    fun routerFunction() =
         router {
-            listOf(
-                POST("/login", handler::login)
-            )
+            "/api/v1/user".nest {
+                listOf(
+                    POST("/login", handler::login),
+                    POST("/join", handler::join),
+                    GET("/", handler::getAll)
+                )
+            }
         }
-    )
 
 }
