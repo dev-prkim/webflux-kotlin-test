@@ -14,8 +14,9 @@ data class User(
     val idx: Long? = null,
     val username: String,
     val password: String,
+    val email: String,
     @Column("login_pin")
-    val loginPin: String,
+    val loginPin: String? = null,
     @Column("login_type")
 //    @Convert(converter = LoginTypeConverter::class)
     val loginType: LoginType = LoginType.DEFAULT,

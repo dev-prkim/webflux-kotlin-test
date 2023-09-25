@@ -1,18 +1,15 @@
 package com.daengalarm.core.handler
 
-import com.daengalarm.core.model.dto.UserDTO
-import com.daengalarm.core.model.entity.User
-import com.daengalarm.core.repository.UserRepository
+import com.daengalarm.core.model.dto.UserJoinDTO
+import com.daengalarm.core.model.dto.UserLoginDTO
+import com.daengalarm.core.model.enums.ErrorMessage
 import com.daengalarm.core.service.UserService
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
-import org.springframework.http.MediaType
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.*
-import org.springframework.web.reactive.function.server.ServerResponse.notFound
-import org.springframework.web.reactive.function.server.ServerResponse.ok
-import reactor.core.publisher.Mono
+import org.springframework.web.reactive.function.server.ServerResponse.*
 
 @Component
 class UserHandler(val service: UserService) {
@@ -20,55 +17,61 @@ class UserHandler(val service: UserService) {
 
     suspend fun findAll(request: ServerRequest): ServerResponse {
         val users = service.findAll()
-        return ServerResponse.ok().json().bodyAndAwait(users)
+        return ok().json().bodyAndAwait(users)
     }
 
     suspend fun search(request: ServerRequest): ServerResponse {
         val criterias = request.queryParams()
         return when {
-            criterias.isEmpty() -> ServerResponse.badRequest().json().bodyValueAndAwait(ErrorMessage("Search must have query params"))
-            criterias.contains("loginPin") -> {
-                val criteriaValue = criterias.getFirst("loginPin")
+            criterias.isEmpty() -> badRequest().json()
+                .bodyValueAndAwait(ErrorMessage.SEARCH_QUERY_PARAM_NOT_FOUND)
+
+            criterias.contains("email") -> {
+                val criteriaValue = criterias.getFirst("email")
                 if (criteriaValue.isNullOrBlank()) {
-                    ServerResponse.badRequest().json().bodyValueAndAwait(ErrorMessage("Incorrect search criteria value"))
+                    badRequest().json().bodyValueAndAwait(ErrorMessage.INCORRECT_SEARCH_CRITERIA_VALUE)
                 } else {
-                    ServerResponse.ok().json().bodyAndAwait(service.findByLoginPin(criteriaValue))
+                    ok().json().bodyAndAwait(service.findByEmail(criteriaValue))
                 }
             }
-            else -> ServerResponse.badRequest().json().bodyValueAndAwait(ErrorMessage("Incorrect search criteria"))
+
+            else -> badRequest().json().bodyValueAndAwait(ErrorMessage.INCORRECT_SEARCH_CRITERIA)
         }
     }
 
     suspend fun login(request: ServerRequest): ServerResponse {
         val param = try {
-            request.bodyToMono<UserDTO>().awaitFirstOrNull()
+            request.bodyToMono<UserLoginDTO>().awaitFirstOrNull()
         } catch (e: Exception) {
             log.error("Decoding body error", e)
             null
         }
 
         return if (param?.username == null || param?.password == null) {
-            ServerResponse.badRequest().json().bodyValueAndAwait(ErrorMessage("`id` must be numeric"))
+            badRequest().json().bodyValueAndAwait(ErrorMessage.DATA_TYPE_ERROR_ID)
         } else {
-            val user = service.login(param?.username, param?.password)
-            if (user == null) ServerResponse.notFound().buildAndAwait()
-            else ServerResponse.ok().json().bodyValueAndAwait(user)
+            val user = service.login(param.username, param.password)
+            if (user == null) notFound().buildAndAwait()
+            else ok().json().bodyValueAndAwait(user)
         }
 
     }
 
-    fun join(req: ServerRequest) : Mono<ServerResponse> = ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(req.bodyToMono(User::class.java)
-            .flatMap { user ->
-                Mono.fromCallable {
-                    repo.save(user)
-                }.then(Mono.just(user))
-            }
-        ).switchIfEmpty(notFound().build())
+    suspend fun join(request: ServerRequest): ServerResponse {
+        val newUser = try {
+            request.bodyToMono<UserJoinDTO>().awaitFirstOrNull()
+        } catch (e: Exception) {
+            log.error("Decoding body error", e)
+            null
+        }
+        return if (newUser == null) {
+            badRequest().json().bodyValueAndAwait(ErrorMessage.INVALID_BODY)
+        } else {
+            val user = service.addOne(newUser)
+            if (user == null) status(HttpStatus.INTERNAL_SERVER_ERROR).json()
+                .bodyValueAndAwait(ErrorMessage.INTERNAL_ERROR)
+            else status(HttpStatus.CREATED).json().bodyValueAndAwait(user)
+        }
+    }
 
-    fun getAll(req: ServerRequest) : Mono<ServerResponse> = ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body<List<User>>(Mono.just(repo.findAll()))
-        .switchIfEmpty(notFound().build())
 }

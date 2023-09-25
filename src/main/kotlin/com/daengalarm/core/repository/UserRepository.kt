@@ -11,5 +11,5 @@ import reactor.core.publisher.Mono
 interface UserRepository : ReactiveCrudRepository<User, Long> {
 
     fun findByUsernameAndPassword(username: String, password: String): Flux<User>
-    fun findByLoginPin(loginPin: String): Flux<User>
+    fun findByEmail(email: String): Flux<User>
 }
