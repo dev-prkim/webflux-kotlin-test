@@ -12,4 +12,5 @@ interface UserRepository : ReactiveCrudRepository<User, Long> {
 
     fun findByUsernameAndPassword(username: String, password: String): Flux<User>
     fun findByEmail(email: String): Flux<User>
+    fun findByUsername(username: String): Flux<User>
 }

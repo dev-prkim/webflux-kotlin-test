@@ -31,7 +31,7 @@ class UserHandler(val service: UserService) {
                 if (criteriaValue.isNullOrBlank()) {
                     badRequest().json().bodyValueAndAwait(ErrorMessage.INCORRECT_SEARCH_CRITERIA_VALUE)
                 } else {
-                    ok().json().bodyAndAwait(service.findByEmail(criteriaValue))
+                    ok().json().bodyAndAwait(service.findAllByEmail(criteriaValue))
                 }
             }
 
@@ -63,15 +63,20 @@ class UserHandler(val service: UserService) {
         } catch (e: Exception) {
             log.error("Decoding body error", e)
             null
+        } ?: return badRequest().json().bodyValueAndAwait(ErrorMessage.INVALID_BODY)
+
+        if(service.findByUsername(newUser.username) != null) {
+            return badRequest().json().bodyValueAndAwait(ErrorMessage.DUPLICATION_USERNAME)
         }
-        return if (newUser == null) {
-            badRequest().json().bodyValueAndAwait(ErrorMessage.INVALID_BODY)
-        } else {
-            val user = service.addOne(newUser)
-            if (user == null) status(HttpStatus.INTERNAL_SERVER_ERROR).json()
-                .bodyValueAndAwait(ErrorMessage.INTERNAL_ERROR)
-            else status(HttpStatus.CREATED).json().bodyValueAndAwait(user)
+
+        if(service.findByEmail(newUser.email) != null) {
+            return badRequest().json().bodyValueAndAwait(ErrorMessage.DUPLICATION_EMAIL)
         }
+
+        val user = service.addOne(newUser)
+        return if (user == null) status(HttpStatus.INTERNAL_SERVER_ERROR).json()
+            .bodyValueAndAwait(ErrorMessage.INTERNAL_ERROR)
+        else status(HttpStatus.CREATED).json().bodyValueAndAwait(user)
     }
 
 }

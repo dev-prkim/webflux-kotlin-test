@@ -6,5 +6,7 @@ enum class ErrorMessage(val message: String) {
     INCORRECT_SEARCH_CRITERIA("Incorrect search criteria"),
     DATA_TYPE_ERROR_ID("`id` must be numeric"),
     INVALID_BODY("Invalid body"),
-    INTERNAL_ERROR("Internal error")
+    INTERNAL_ERROR("Internal error"),
+    DUPLICATION_USERNAME("Username cannot be duplicated"),
+    DUPLICATION_EMAIL("Email cannot be duplicated")
 }

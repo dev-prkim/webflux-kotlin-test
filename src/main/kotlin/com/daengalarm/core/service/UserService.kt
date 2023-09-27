@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service
 class UserService(private val repo: UserRepository) {
     suspend fun findAll() = repo.findAll().asFlow()
     suspend fun login(userName: String, password: String) = repo.findByUsernameAndPassword(userName, password).awaitFirstOrNull()
-    suspend fun findByEmail(loginPin: String) = repo.findByEmail(loginPin).asFlow()
+    suspend fun findByEmail(email: String) = repo.findByEmail(email).awaitFirstOrNull()
+    suspend fun findAllByEmail(email: String) = repo.findByEmail(email).asFlow()
+    suspend fun findByUsername(username: String) = repo.findByUsername(username).awaitFirstOrNull()
     suspend fun addOne(user: UserJoinDTO) = repo.save(user.toModel()).awaitFirstOrNull()
 }
