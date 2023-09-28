@@ -1,4 +1,4 @@
-DROP TABLE  if exists users;
+DROP TABLE if exists users;
 CREATE TABLE users
 (
     idx         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -9,4 +9,13 @@ CREATE TABLE users
     login_type  VARCHAR(10)   not null,
     created_at   DATETIME default CURRENT_TIMESTAMP,
     modified_at DATETIME default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+);
+
+DROP TABLE if exists event_log;
+CREATE TABLE event_log
+(
+    idx         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    message     VARCHAR(3000)  not null,
+    topic       VARCHAR(100) not null,
+    created_at   DATETIME default CURRENT_TIMESTAMP
 );

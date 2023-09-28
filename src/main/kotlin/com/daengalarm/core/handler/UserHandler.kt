@@ -10,9 +10,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
 import org.springframework.web.reactive.function.server.ServerResponse.*
+import com.daengalarm.core.producer.KafkaUserProducer
 
 @Component
-class UserHandler(val service: UserService) {
+class UserHandler(val service: UserService, val kafkaProducer: KafkaUserProducer) {
     private val log = LoggerFactory.getLogger(UserHandler::class.java)
 
     suspend fun findAll(request: ServerRequest): ServerResponse {
@@ -47,12 +48,15 @@ class UserHandler(val service: UserService) {
             null
         }
 
-        return if (param?.username == null || param?.password == null) {
-            badRequest().json().bodyValueAndAwait(ErrorMessage.DATA_TYPE_ERROR_ID)
-        } else {
-            val user = service.login(param.username, param.password)
-            if (user == null) notFound().buildAndAwait()
-            else ok().json().bodyValueAndAwait(user)
+        if (param?.username == null) {
+            return badRequest().json().bodyValueAndAwait(ErrorMessage.DATA_TYPE_ERROR_ID)
+        }
+
+        val user = service.login(param.username, param.password)
+        return if (user == null) notFound().buildAndAwait()
+        else {
+            kafkaProducer.sendMessageLoginLog("${param.username} logged in.");
+            ok().json().bodyValueAndAwait(user)
         }
 
     }
@@ -65,11 +69,11 @@ class UserHandler(val service: UserService) {
             null
         } ?: return badRequest().json().bodyValueAndAwait(ErrorMessage.INVALID_BODY)
 
-        if(service.findByUsername(newUser.username) != null) {
+        if (service.findByUsername(newUser.username) != null) {
             return badRequest().json().bodyValueAndAwait(ErrorMessage.DUPLICATION_USERNAME)
         }
 
-        if(service.findByEmail(newUser.email) != null) {
+        if (service.findByEmail(newUser.email) != null) {
             return badRequest().json().bodyValueAndAwait(ErrorMessage.DUPLICATION_EMAIL)
         }
 
